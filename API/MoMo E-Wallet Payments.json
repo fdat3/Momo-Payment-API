@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "0ad20c74-bd80-465a-a04d-49f165de0cec",
+		"name": "MoMo E-Wallet Payments (One-time)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "21283112"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var date = new Date().getTime();",
+							"console.log(date);",
+							"var requestId = date+\"id\";",
+							"var orderId = date +\":0123456778\";",
+							"var autoCapture = true;",
+							"var requestType = \"captureWallet\";",
+							"var notifyUrl = \"https://sangle.free.beeceptor.com\";",
+							"var returnUrl = \"https://sangle.free.beeceptor.com\";",
+							"var amount = \"500000\";",
+							"var orderInfo = \"Thanh toán qua ví MoMo\";",
+							"var extraData = \"ew0KImVtYWlsIjogImh1b25neGRAZ21haWwuY29tIg0KfQ==\";",
+							"var signature = \"accessKey=\"+pm.environment.get(\"accessKey\")+\"&amount=\" + amount+\"&extraData=\" + extraData+\"&ipnUrl=\" + notifyUrl+\"&orderId=\" + orderId+\"&orderInfo=\" + orderInfo + \"&partnerCode=\" + pm.environment.get(\"partnerCode\") +\"&redirectUrl=\" + returnUrl+\"&requestId=\" + requestId+\"&requestType=\" + requestType;",
+							"var hash = CryptoJS.HmacSHA256(signature, pm.environment.get(\"secretKey\"));",
+							"signature = CryptoJS.enc.Hex.stringify(hash);",
+							"postman.setEnvironmentVariable(\"requestId\", requestId);",
+							"postman.setEnvironmentVariable(\"orderId\",orderId);",
+							"postman.setEnvironmentVariable(\"requestType\",requestType);",
+							"postman.setEnvironmentVariable(\"notifyUrl\",notifyUrl);",
+							"postman.setEnvironmentVariable(\"autoCapture\", autoCapture);",
+							"postman.setEnvironmentVariable(\"returnUrl\",returnUrl);",
+							"postman.setEnvironmentVariable(\"amount\",amount);",
+							"postman.setEnvironmentVariable(\"orderInfo\",orderInfo);",
+							"postman.setEnvironmentVariable(\"extraData\",extraData);",
+							"postman.setEnvironmentVariable(\"signature\",signature);",
+							"postman.setEnvironmentVariable(\"lang\", 'vi');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"partnerCode\": \"{{partnerCode}}\",\n    \"partnerName\": \"Test\",\n    \"storeId\": \"{{partnerCode}}\",\n    \"requestType\": \"{{requestType}}\",\n    \"ipnUrl\": \"{{notifyUrl}}\",\n    \"redirectUrl\": \"{{returnUrl}}\",\n    \"orderId\": \"{{orderId}}\",\n    \"amount\": \"{{amount}}\",\n    \"lang\": \"{{lang}}\",\n    \"autoCapture\": {{autoCapture}},\n    \"orderInfo\": \"{{orderInfo}}\",\n    \"requestId\": \"{{requestId}}\",\n    \"extraData\": \"{{extraData}}\",\n    \"signature\": \"{{signature}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{paygate}}/v2/gateway/api/create"
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Transaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var date = new Date().getTime();",
+							"var requestId = date +\"0123456778\";",
+							"var orderId = \"1637038349736:0123456778\";",
+							"//var requestType = \"cancel\";",
+							"var amount = 100000;",
+							"var requestType = \"capture\";",
+							"var lang = \"vi\";",
+							"var description=\"desc1111\";",
+							"var signature = \"accessKey=\"+pm.environment.get(\"accessKey\")+\"&amount=\"+amount+\"&description=\"+description+\"&orderId=\"+orderId+\"&partnerCode=\"+pm.environment.get(\"partnerCode\")+\"&requestId=\"+requestId+\"&requestType=\"+requestType;",
+							"console.log(signature);",
+							"var hash = CryptoJS.HmacSHA256(signature, pm.environment.get(\"secretKey\"));",
+							"signature = CryptoJS.enc.Hex.stringify(hash);",
+							"postman.setEnvironmentVariable(\"requestId\",requestId);",
+							"postman.setEnvironmentVariable(\"orderId\",orderId);",
+							"postman.setEnvironmentVariable(\"amount\",amount);",
+							"postman.setEnvironmentVariable(\"requestType\",requestType);",
+							"postman.setEnvironmentVariable(\"signature\",signature);",
+							"postman.setEnvironmentVariable(\"lang\",lang);",
+							"postman.setEnvironmentVariable(\"description\",description);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"partnerCode\": \"{{partnerCode}}\",\n  \"orderId\": \"{{orderId}}\",\n  \"requestId\": \"{{requestId}}\",\n  \"requestType\": \"{{requestType}}\",\n  \"amount\": \"{{amount}}\",\n  \"lang\":  \"vi\",\n  \"description\":  \"{{description}}\",\n  \"signature\": \"{{signature}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{paygate}}/v2/gateway/api/confirm"
+			},
+			"response": []
+		},
+		{
+			"name": "Refund",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var date = new Date().getTime();",
+							"var orderId =date +\":0123456778\";",
+							"var amount = 100000;",
+							"var orderInfo = \"Thanh toán qua ví MoMo\";",
+							"var lang = \"en\";",
+							"var transId = 2598278563;",
+							"var description=\"\";",
+							"var signature = \"accessKey=\"+pm.environment.get(\"accessKey\")+\"&amount=\"+amount+\"&description=\"+description+\"&orderId=\"+orderId+\"&partnerCode=\"+pm.environment.get(\"partnerCode\")+\"&requestId=\"+date+\"&transId=\"+transId;",
+							"var hash = CryptoJS.HmacSHA256(signature, pm.environment.get(\"secretKey\"));",
+							"signature = CryptoJS.enc.Hex.stringify(hash);",
+							"postman.setEnvironmentVariable(\"requestId\",date);",
+							"postman.setEnvironmentVariable(\"orderId\",orderId);",
+							"postman.setEnvironmentVariable(\"amount\",amount);",
+							"postman.setEnvironmentVariable(\"orderInfo\",orderInfo);",
+							"postman.setEnvironmentVariable(\"signature\",signature);",
+							"postman.setEnvironmentVariable(\"transId\",transId);",
+							"postman.setEnvironmentVariable(\"lang\",lang);",
+							"postman.setEnvironmentVariable(\"description\",description);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"partnerCode\": \"{{partnerCode}}\",\n  \"orderId\": \"{{orderId}}\",\n  \"requestId\": \"{{requestId}}\",\n  \"amount\": \"{{amount}}\",\n  \"transId\":  \"{{transId}}\",\n  \"lang\":  \"{{lang}}\",\n  \"description\":  \"{{description}}\",\n  \"signature\": \"{{signature}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{paygate}}/v2/gateway/api/refund"
+			},
+			"response": []
+		},
+		{
+			"name": "Query Transaction",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var requestId = \"CGV19072017_1525975811\";",
+							"var orderId = \"1635325132594:0123456778\";",
+							"var signature = \"accessKey=\"+pm.environment.get(\"accessKey\")+\"&orderId=\"+orderId+\"&partnerCode=\"+pm.environment.get(\"partnerCode\")+\"&requestId=\"+requestId",
+							"var hash = CryptoJS.HmacSHA256(signature, pm.environment.get(\"secretKey\"));",
+							"signature = CryptoJS.enc.Hex.stringify(hash);",
+							"postman.setEnvironmentVariable(\"requestId\", requestId);",
+							"postman.setEnvironmentVariable(\"orderId\",orderId);",
+							"postman.setEnvironmentVariable(\"signature\",signature);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"partnerCode\": \"{{partnerCode}}\",\n    \"requestId\": \"{{requestId}}\",\n    \"orderId\": \"{{orderId}}\",\n    \"lang\":  \"{{lang}}\",\n    \"signature\": \"{{signature}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{paygate}}/v2/gateway/api/query"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
